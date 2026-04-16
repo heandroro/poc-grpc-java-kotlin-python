@@ -1,0 +1,8 @@
+name: poc-apm
+version: 1.0.0
+description: APM package for Java 25 + Spring Boot 4 applications — skills for code quality, testing, performance tuning, and containerization.
+author: heandroro
+license: MIT
+type: hybrid
+dependencies:
+  apm: []

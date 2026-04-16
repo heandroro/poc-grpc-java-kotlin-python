@@ -1,0 +1,97 @@
+<!-- Maven plugins para qualidade de código: Checkstyle, SpotBugs, PMD, Error Prone + NullAway -->
+<!-- Adicionar dentro de <build><plugins> no pom.xml -->
+
+<!-- Checkstyle -->
+<plugin>
+  <groupId>org.apache.maven.plugins</groupId>
+  <artifactId>maven-checkstyle-plugin</artifactId>
+  <version>3.4.0</version>
+  <configuration>
+    <configLocation>config/checkstyle/checkstyle.xml</configLocation>
+    <suppressionsLocation>config/checkstyle/suppressions.xml</suppressionsLocation>
+    <failOnViolation>true</failOnViolation>
+    <includeTestSourceDirectory>true</includeTestSourceDirectory>
+  </configuration>
+  <executions>
+    <execution>
+      <id>validate</id>
+      <phase>validate</phase>
+      <goals><goal>check</goal></goals>
+    </execution>
+  </executions>
+</plugin>
+
+<!-- SpotBugs -->
+<plugin>
+  <groupId>com.github.spotbugs</groupId>
+  <artifactId>spotbugs-maven-plugin</artifactId>
+  <version>4.8.3.0</version>
+  <configuration>
+    <effort>Max</effort>
+    <threshold>Low</threshold>
+    <failOnError>true</failOnError>
+    <plugins>
+      <plugin>
+        <groupId>com.h3xstream.findsecbugs</groupId>
+        <artifactId>findsecbugs-plugin</artifactId>
+        <version>1.13.0</version>
+      </plugin>
+    </plugins>
+  </configuration>
+  <executions>
+    <execution>
+      <goals><goal>check</goal></goals>
+    </execution>
+  </executions>
+</plugin>
+
+<!-- PMD -->
+<plugin>
+  <groupId>org.apache.maven.plugins</groupId>
+  <artifactId>maven-pmd-plugin</artifactId>
+  <version>3.22.0</version>
+  <configuration>
+    <failOnViolation>true</failOnViolation>
+    <printFailingErrors>true</printFailingErrors>
+    <rulesets>
+      <ruleset>config/pmd/ruleset.xml</ruleset>
+    </rulesets>
+  </configuration>
+  <executions>
+    <execution>
+      <goals><goal>check</goal></goals>
+    </execution>
+  </executions>
+</plugin>
+
+<!-- Error Prone + NullAway -->
+<plugin>
+  <groupId>org.apache.maven.plugins</groupId>
+  <artifactId>maven-compiler-plugin</artifactId>
+  <version>3.13.0</version>
+  <configuration>
+    <release>25</release>
+    <compilerArgs>
+      <arg>-Werror</arg>
+      <arg>-XDcompilePolicy=simple</arg>
+      <arg>-Xplugin:ErrorProne -XepOpt:NullAway:AnnotatedPackages=com.example.app</arg>
+    </compilerArgs>
+    <annotationProcessorPaths>
+      <path>
+        <groupId>com.google.errorprone</groupId>
+        <artifactId>error_prone_core</artifactId>
+        <version>2.28.0</version>
+      </path>
+      <path>
+        <groupId>com.uber.nullaway</groupId>
+        <artifactId>nullaway</artifactId>
+        <version>0.11.0</version>
+      </path>
+      <path>
+        <groupId>org.mapstruct</groupId>
+        <artifactId>mapstruct-processor</artifactId>
+        <version>1.6.0</version>
+      </path>
+    </annotationProcessorPaths>
+  </configuration>
+</plugin>

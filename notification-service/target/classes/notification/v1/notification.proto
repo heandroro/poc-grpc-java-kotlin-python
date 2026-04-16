@@ -1,0 +1,88 @@
+syntax = "proto3";
+
+package notification.v1;
+
+import "google/protobuf/timestamp.proto";
+import "google/rpc/status.proto";
+
+option java_package = "br.com.poc.grpc.notification.v1";
+option java_multiple_files = true;
+option java_outer_classname = "NotificationProto";
+
+// NotificationService handles dispatching, streaming and acknowledging notifications.
+service NotificationService {
+  // SendNotification dispatches a single notification (unary).
+  rpc SendNotification(SendNotificationRequest) returns (SendNotificationResponse);
+
+  // StreamNotifications opens a server-streaming channel to receive live notifications.
+  rpc StreamNotifications(StreamNotificationsRequest) returns (stream Notification);
+
+  // NotificationChannel is a bidirectional stream for real-time ack/status updates.
+  rpc NotificationChannel(stream NotificationAck) returns (stream NotificationStatus);
+}
+
+// ------------------------------------------------------------------
+// Messages
+// ------------------------------------------------------------------
+
+enum NotificationPriority {
+  NOTIFICATION_PRIORITY_UNSPECIFIED = 0;
+  NOTIFICATION_PRIORITY_LOW = 1;
+  NOTIFICATION_PRIORITY_NORMAL = 2;
+  NOTIFICATION_PRIORITY_HIGH = 3;
+  NOTIFICATION_PRIORITY_CRITICAL = 4;
+}
+
+enum NotificationState {
+  NOTIFICATION_STATE_UNSPECIFIED = 0;
+  NOTIFICATION_STATE_PENDING = 1;
+  NOTIFICATION_STATE_DELIVERED = 2;
+  NOTIFICATION_STATE_ACKNOWLEDGED = 3;
+  NOTIFICATION_STATE_FAILED = 4;
+}
+
+message Notification {
+  string notification_id = 1;
+  string user_id = 2;
+  string topic = 3;
+  string title = 4;
+  string body = 5;
+  NotificationPriority priority = 6;
+  NotificationState state = 7;
+  google.protobuf.Timestamp created_at = 8;
+  map<string, string> metadata = 9;
+}
+
+message SendNotificationRequest {
+  string user_id = 1;
+  string topic = 2;
+  string title = 3;
+  string body = 4;
+  NotificationPriority priority = 5;
+  map<string, string> metadata = 6;
+}
+
+message SendNotificationResponse {
+  string notification_id = 1;
+  google.protobuf.Timestamp accepted_at = 2;
+}
+
+message StreamNotificationsRequest {
+  string user_id = 1;
+  // Filter by topics; empty means all topics.
+  repeated string topics = 2;
+  // Only stream notifications with priority >= min_priority.
+  NotificationPriority min_priority = 3;
+}
+
+message NotificationAck {
+  string notification_id = 1;
+  string user_id = 2;
+  google.protobuf.Timestamp acknowledged_at = 3;
+}
+
+message NotificationStatus {
+  string notification_id = 1;
+  NotificationState state = 2;
+  google.rpc.Status error_status = 3;
+}

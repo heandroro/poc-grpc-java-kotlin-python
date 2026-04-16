@@ -1,0 +1,120 @@
+version: "3.9"
+
+x-common-env: &common-env
+  JWT_SECRET: ${JWT_SECRET:-poc-grpc-super-secret-key-change-in-production}
+  OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4317
+
+services:
+  # -------------------------------------------------------------------------
+  # notification-service (Java / Spring Boot 4)
+  # -------------------------------------------------------------------------
+  notification-service:
+    build:
+      context: ..
+      dockerfile: notification-service/Dockerfile
+    container_name: notification-service
+    ports:
+      - "50051:50051"
+      - "8080:8080"
+    environment:
+      <<: *common-env
+      SPRING_APPLICATION_NAME: notification-service
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8080/actuator/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    networks:
+      - grpc-net
+    depends_on:
+      jaeger:
+        condition: service_started
+
+  # -------------------------------------------------------------------------
+  # subscription-service (Kotlin)
+  # -------------------------------------------------------------------------
+  subscription-service:
+    build:
+      context: ..
+      dockerfile: subscription-service/Dockerfile
+    container_name: subscription-service
+    ports:
+      - "50052:50052"
+      - "8081:8081"
+    environment:
+      <<: *common-env
+      GRPC_PORT: "50052"
+      HTTP_PORT: "8081"
+      NOTIFICATION_SERVICE_HOST: notification-service
+      NOTIFICATION_SERVICE_PORT: "50051"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8081/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    networks:
+      - grpc-net
+    depends_on:
+      notification-service:
+        condition: service_healthy
+
+  # -------------------------------------------------------------------------
+  # analytics-service (Python)
+  # -------------------------------------------------------------------------
+  analytics-service:
+    build:
+      context: ..
+      dockerfile: analytics-service/Dockerfile
+    container_name: analytics-service
+    ports:
+      - "50053:50053"
+      - "9091:9091"
+    environment:
+      <<: *common-env
+      GRPC_PORT: "50053"
+      PROMETHEUS_PORT: "9091"
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import grpc; ch=grpc.insecure_channel('localhost:50053'); grpc.channel_ready_future(ch).result(timeout=3)\" 2>/dev/null && echo ok || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+    networks:
+      - grpc-net
+    depends_on:
+      jaeger:
+        condition: service_started
+
+  # -------------------------------------------------------------------------
+  # Jaeger (all-in-one) — traces
+  # -------------------------------------------------------------------------
+  jaeger:
+    image: jaegertracing/all-in-one:1.58
+    container_name: jaeger
+    ports:
+      - "16686:16686"   # Jaeger UI
+      - "4317:4317"     # OTLP gRPC
+      - "4318:4318"     # OTLP HTTP
+    environment:
+      COLLECTOR_OTLP_ENABLED: "true"
+    networks:
+      - grpc-net
+
+  # -------------------------------------------------------------------------
+  # Prometheus — metrics
+  # -------------------------------------------------------------------------
+  prometheus:
+    image: prom/prometheus:v2.52.0
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    networks:
+      - grpc-net
+    depends_on:
+      - notification-service
+      - analytics-service
+
+networks:
+  grpc-net:
+    driver: bridge

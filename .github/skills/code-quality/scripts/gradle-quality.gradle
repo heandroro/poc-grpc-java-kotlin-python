@@ -1,0 +1,51 @@
+// Gradle — Qualidade de código: Checkstyle, SpotBugs, PMD, Error Prone + NullAway
+// Adicionar ao build.gradle.kts
+
+plugins {
+    id("checkstyle")
+    id("pmd")
+    id("com.github.spotbugs") version "6.0.9"
+    id("net.ltgt.errorprone") version "4.0.0"
+}
+
+// --- Checkstyle ---
+checkstyle {
+    toolVersion = "10.17.0"
+    configFile = file("config/checkstyle/checkstyle.xml")
+    isIgnoreFailures = false
+}
+
+// --- PMD ---
+pmd {
+    toolVersion = "7.3.0"
+    isConsoleOutput = true
+    ruleSetFiles = files("config/pmd/ruleset.xml")
+    ruleSets = listOf()         // desabilita regras padrão, usa apenas o ruleset customizado
+}
+
+// --- SpotBugs ---
+spotbugs {
+    effort = com.github.spotbugs.snom.Effort.MAX
+    reportLevel = com.github.spotbugs.snom.Confidence.LOW
+    excludeFilter = file("config/spotbugs/exclude.xml")
+}
+
+dependencies {
+    spotbugsPlugins("com.h3xstream.findsecbugs:findsecbugs-plugin:1.13.0")
+
+    // Error Prone + NullAway
+    errorprone("com.google.errorprone:error_prone_core:2.28.0")
+    errorprone("com.uber.nullaway:nullaway:0.11.0")
+
+    // JSpecify
+    compileOnly("org.jspecify:jspecify:1.0.0")
+}
+
+// --- Error Prone + NullAway ---
+tasks.withType<JavaCompile>().configureEach {
+    options.errorprone {
+        check("NullAway", net.ltgt.gradle.errorprone.CheckSeverity.ERROR)
+        option("NullAway:AnnotatedPackages", "com.example.app")
+        option("NullAway:AcknowledgeRestrictiveAnnotations", "true")
+    }
+}

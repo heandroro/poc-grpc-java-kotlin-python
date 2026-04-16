@@ -1,0 +1,27 @@
+// Gradle Dependencies - best-practices skill
+// Add these to your build.gradle or build.gradle.kts
+
+plugins {
+    id("net.ltgt.errorprone") version "4.0.0"
+}
+
+dependencies {
+    // JSpecify for null safety annotations
+    compileOnly("org.jspecify:jspecify:1.0.0")
+    
+    // MapStruct
+    implementation("org.mapstruct:mapstruct:1.6.0")
+    annotationProcessor("org.mapstruct:mapstruct-processor:1.6.0")
+    
+    // NullAway + Error Prone
+    errorprone("com.google.errorprone:error_prone_core:2.24.0")
+    errorprone("com.uber.nullaway:nullaway:0.11.0")
+}
+
+tasks.withType(JavaCompile) {
+    options.errorprone {
+        check("NullAway", net.ltgt.gradle.errorprone.CheckSeverity.ERROR)
+        option("NullAway:AnnotatedPackages", "com.example.app")
+        option("NullAway:AcknowledgeRestrictiveAnnotations", "true")
+    }
+}

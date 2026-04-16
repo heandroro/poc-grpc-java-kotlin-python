@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!DOCTYPE suppressions PUBLIC
+    "-//Checkstyle//DTD SuppressionFilter Configuration 1.0//EN"
+    "https://checkstyle.org/dtds/suppressions_1_0.dtd">
+<suppressions>
+  <!-- Relax line length in test files -->
+  <suppress checks="LineLength" files=".*Test\.java"/>
+  <!-- Switch expressions with arrow syntax are valid — suppress indentation inside switch -->
+  <suppress checks="Indentation" files="NotificationProtoMapper\.java"/>
+  <!-- Long lines in adapter due to fully-qualified proto type names -->
+  <suppress checks="LineLength" files="NotificationGrpcAdapter\.java"/>
+  <!-- Interceptors have long method signatures -->
+  <suppress checks="LineLength" files=".*Interceptor\.java"/>
+</suppressions>

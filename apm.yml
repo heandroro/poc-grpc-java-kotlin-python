@@ -1,0 +1,9 @@
+name: poc-grpc
+version: 1.0.0
+description: APM project for poc-grpc
+author: Leandro Yamaniha
+dependencies:
+  apm:
+  - heandroro/apm-java-25-spring-boot-4-hexagonal
+  mcp: []
+scripts: {}

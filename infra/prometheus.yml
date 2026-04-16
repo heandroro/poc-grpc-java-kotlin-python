@@ -1,0 +1,18 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: notification-service
+    static_configs:
+      - targets: ["notification-service:8080"]
+    metrics_path: /actuator/prometheus
+
+  - job_name: analytics-service
+    static_configs:
+      - targets: ["analytics-service:9091"]
+
+  - job_name: subscription-service
+    static_configs:
+      - targets: ["subscription-service:8081"]
+    metrics_path: /metrics

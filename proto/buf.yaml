@@ -1,0 +1,11 @@
+version: v2
+lint:
+  use:
+    - BASIC
+    - DEFAULT
+  except:
+    - PACKAGE_VERSION_SUFFIX
+breaking:
+  use:
+    - FILE
+  ignore_unstable_packages: false

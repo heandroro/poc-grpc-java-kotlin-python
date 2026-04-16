@@ -1,0 +1,8 @@
+
+# APM dependencies
+apm_modules/
+
+# Integration test — generated proto stubs and Python cache
+integration-tests/generated/
+integration-tests/__pycache__/
+integration-tests/.pytest_cache/

@@ -1,0 +1,27 @@
+lockfile_version: '1'
+generated_at: '2026-04-16T00:00:29.304483+00:00'
+apm_version: 0.8.11
+dependencies:
+- repo_url: heandroro/apm-java-25-spring-boot-4-hexagonal
+  host: github.com
+  resolved_commit: 81f2c458a1234eaefb11b27bed2cb8f1757bb4a1
+  package_type: hybrid
+  deployed_files:
+  - .github/agents/devops-agent.agent.md
+  - .github/agents/performance-agent.agent.md
+  - .github/agents/quality-agent.agent.md
+  - .github/agents/test-agent.agent.md
+  - .github/instructions/java-spring-boot.instructions.md
+  - .github/prompts/review.prompt.md
+  - .github/skills/apm-java-25-spring-boot-4-hexagonal
+  - .github/skills/arch-test
+  - .github/skills/best-practices
+  - .github/skills/code-quality
+  - .github/skills/container
+  - .github/skills/integration-test
+  - .github/skills/local-test
+  - .github/skills/observability
+  - .github/skills/stress-test
+  - .github/skills/tuning
+  - .github/skills/unit-test
+  content_hash: sha256:31cc3bc3ea7e35e7a1b0ea641fce0af0ebba7917dad2637a3b5dea344b84b5e6

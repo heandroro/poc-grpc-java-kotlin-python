@@ -1,0 +1,10 @@
+.git
+.gitignore
+.github
+apm_modules
+**/target
+**/.gradle
+**/build
+**/__pycache__
+**/*.pyc
+**/node_modules
