@@ -1,0 +1,42 @@
+<!-- Dependências Maven para observabilidade completa -->
+<!-- Adicionar dentro de <dependencies> no pom.xml -->
+
+<!-- Spring Boot Actuator -->
+<dependency>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-starter-actuator</artifactId>
+</dependency>
+
+<!-- Micrometer — Prometheus Registry -->
+<dependency>
+  <groupId>io.micrometer</groupId>
+  <artifactId>micrometer-registry-prometheus</artifactId>
+</dependency>
+
+<!-- Distributed Tracing — OpenTelemetry bridge -->
+<dependency>
+  <groupId>io.micrometer</groupId>
+  <artifactId>micrometer-tracing-bridge-otel</artifactId>
+</dependency>
+<dependency>
+  <groupId>io.opentelemetry</groupId>
+  <artifactId>opentelemetry-exporter-otlp</artifactId>
+</dependency>
+
+<!-- Log correlation (trace ID no MDC) -->
+<dependency>
+  <groupId>io.micrometer</groupId>
+  <artifactId>micrometer-tracing</artifactId>
+</dependency>
+
+<!-- Logging estruturado JSON (Logback) -->
+<dependency>
+  <groupId>ch.qos.logback.contrib</groupId>
+  <artifactId>logback-json-classic</artifactId>
+  <version>0.1.5</version>
+</dependency>
+<dependency>
+  <groupId>ch.qos.logback.contrib</groupId>
+  <artifactId>logback-jackson</artifactId>
+  <version>0.1.5</version>
+</dependency>

@@ -1,0 +1,30 @@
+<!-- Maven Jib Plugin Configuration - container skill -->
+<!-- Add to pom.xml plugins section -->
+
+<plugin>
+  <groupId>com.google.cloud.tools</groupId>
+  <artifactId>jib-maven-plugin</artifactId>
+  <version>3.4.4</version>
+  <configuration>
+    <from>
+      <image>eclipse-temurin:25-jre</image>
+    </from>
+    <to>
+      <image>registry.example.com/app</image>
+      <tags>
+        <tag>${project.version}</tag>
+        <tag>latest</tag>
+      </tags>
+    </to>
+    <container>
+      <jvmFlags>
+        <jvmFlag>-XX:+UseZGC</jvmFlag>
+        <jvmFlag>-XX:MaxRAMPercentage=75.0</jvmFlag>
+      </jvmFlags>
+      <ports>
+        <port>8080</port>
+      </ports>
+      <user>1000</user>
+    </container>
+  </configuration>
+</plugin>

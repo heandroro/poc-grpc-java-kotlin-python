@@ -1,0 +1,41 @@
+<!-- logback-spring.xml — Logging estruturado JSON com trace ID -->
+<!-- Colocar em: src/main/resources/logback-spring.xml -->
+
+<configuration>
+
+  <!-- JSON em produção -->
+  <springProfile name="!local">
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+      <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+        <layout class="ch.qos.logback.contrib.json.classic.JsonLayout">
+          <jsonFormatter class="ch.qos.logback.contrib.jackson.JacksonJsonFormatter">
+            <prettyPrint>false</prettyPrint>
+          </jsonFormatter>
+          <timestampFormat>yyyy-MM-dd'T'HH:mm:ss.SSS'Z'</timestampFormat>
+          <appendLineSeparator>true</appendLineSeparator>
+        </layout>
+      </encoder>
+    </appender>
+
+    <root level="INFO">
+      <appender-ref ref="CONSOLE" />
+    </root>
+  </springProfile>
+
+  <!-- Texto legível em desenvolvimento local -->
+  <springProfile name="local">
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+      <encoder>
+        <pattern>%d{HH:mm:ss.SSS} %-5level [%15.15t] [traceId=%X{traceId}] %-40.40logger{39} : %msg%n</pattern>
+      </encoder>
+    </appender>
+
+    <root level="DEBUG">
+      <appender-ref ref="CONSOLE" />
+    </root>
+
+    <logger name="org.springframework.web" level="DEBUG" />
+    <logger name="com.example.app" level="DEBUG" />
+  </springProfile>
+
+</configuration>

@@ -1,0 +1,52 @@
+# application.yml — Configuração completa de observabilidade
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,loggers,threaddump,heapdump
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when_authorized
+      show-components: always
+      probes:
+        enabled: true
+      group:
+        liveness:
+          include: livenessState,ping
+        readiness:
+          include: readinessState,db,redis,kafka
+        startup:
+          include: startupState
+    info:
+      enabled: true
+    loggers:
+      enabled: true
+  info:
+    env:
+      enabled: true
+    build:
+      enabled: true
+    git:
+      enabled: true
+      mode: full
+  tracing:
+    sampling:
+      probability: 1.0        # 100% em dev; usar 0.1 em produção com alto volume
+  metrics:
+    tags:
+      application: ${spring.application.name}
+      environment: ${spring.profiles.active:default}
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+        http.client.requests: true
+      slo:
+        http.server.requests: 100ms,200ms,500ms   # SLO buckets para histograma
+    export:
+      prometheus:
+        enabled: true
+  observations:
+    key-values:
+      region: ${AWS_REGION:unknown}

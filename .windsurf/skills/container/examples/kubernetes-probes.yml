@@ -1,0 +1,43 @@
+# Spring Boot — habilitar probes no application.yml
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      group:
+        liveness:
+          include: livenessState
+        readiness:
+          include: readinessState,db,redis
+
+# Kubernetes Deployment — health probes
+# Inserir em spec.containers[]
+livenessProbe:
+  httpGet:
+    path: /actuator/health/liveness
+    port: 8080
+  initialDelaySeconds: 10
+  periodSeconds: 15
+  failureThreshold: 3
+
+readinessProbe:
+  httpGet:
+    path: /actuator/health/readiness
+    port: 8080
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  failureThreshold: 3
+
+startupProbe:
+  httpGet:
+    path: /actuator/health/startup
+    port: 8080
+  initialDelaySeconds: 5
+  periodSeconds: 5
+  failureThreshold: 30        # 30 × 5s = 150s máximo para startup
+
+# .dive-ci.yaml — análise de eficiência de imagem no CI
+rules:
+  lowestEfficiency: 0.95
+  highestWastedBytes: 50MB
+  highestUserWastedPercent: 0.10
